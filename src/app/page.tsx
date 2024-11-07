@@ -1,101 +1,168 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import { useState, useRef, useEffect } from 'react'
+import { Send } from 'lucide-react'
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+// UI コンポーネント
+const Button = ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => (
+  <button
+    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+    {...props}
+  >
+    {children}
+  </button>
+)
+
+const Input = ({ ...props }) => (
+  <input
+    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    {...props}
+  />
+)
+
+const Card = ({ children, className, ...props }: { children: React.ReactNode, className?: string }) => (
+  <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`} {...props}>
+    {children}
+  </div>
+)
+
+const CardHeader = ({ children, ...props }: { children: React.ReactNode }) => (
+  <div className="flex flex-col space-y-1.5 p-6" {...props}>
+    {children}
+  </div>
+)
+
+const CardTitle = ({ children, ...props }: { children: React.ReactNode }) => (
+  <h3 className="text-2xl font-semibold leading-none tracking-tight" {...props}>
+    {children}
+  </h3>
+)
+
+const CardContent = ({ children, className, ...props }: { children: React.ReactNode, className?: string }) => (
+  <div className={`p-6 pt-0 ${className}`} {...props}>
+    {children}
+  </div>
+)
+
+const CardFooter = ({ children, ...props }: { children: React.ReactNode }) => (
+  <div className="flex items-center p-6 pt-0" {...props}>
+    {children}
+  </div>
+)
+
+const ChatBubble = ({ children, role }: { children: React.ReactNode, role: 'user' | 'assistant' }) => (
+  <div className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
+    <div className={`relative max-w-[70%] p-2 rounded-lg shadow-md ${role === 'user' ? 'bg-green-500 text-white' : 'bg-white text-black'}`}>
+      {children}
     </div>
-  );
+  </div>
+)
+
+
+
+type Message = {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export default function Chatbot() {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [interruptSet, setInterruptSet] = useState<boolean>(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(scrollToBottom, [messages])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setMessages(prev => [...prev, { role: 'user', content: input }]);
+    setInput('');
+
+    try {
+      const endpoint = interruptSet ? '/continue' : '/ask';
+      const response = await fetch(`${process.env.BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(interruptSet ? { session_id: sessionId, additional_input: input } : { user_input: input }),
+      });
+
+      if (!response.ok) throw new Error('ネットワークエラーが発生しました');
+
+      const data = await response.json();
+      if (data.response !== null) {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      }
+
+
+      console.log('handleSubmit data.interrupt:', data.interrupt);
+      console.log('handleSubmit sessionId:', data.session_id);
+      console.log('handleSubmit interrupt_event:', data.interrupt_event);
+
+      setSessionId(data.session_id);
+
+      if (data.interrupt) {
+        
+        await handleInterrupt(data.session_id, data.interrupt_event);
+      } else {
+        // セッションが中断されていない場合、セッションIDをリセット
+        setInterruptSet(false);
+      }
+    } catch (error) {
+      console.error('エラー:', error);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'エラーが発生しました。もう一度お試しください。' }]);
+    } 
+  }
+
+  const handleInterrupt = async (sessionId: string, interrupt_event: string[]) => {
+    if (interrupt_event.includes('date_weather')) {
+      setMessages(prev => [...prev, { role: 'assistant', content: '日付か天気の質問をしてください' }]);
+    }else if (interrupt_event.some(event => event.includes('classify_time'))) {
+      setMessages(prev => [...prev, { role: 'assistant', content: '天気を知りたい時間を入力してください（例：「午前中」「20時」など）' }]);
+    }
+    
+    setInput(''); // 入力欄をクリア
+    setSessionId(sessionId);
+    setInterruptSet(true);
+
+    console.log('handleInterrupt messages:', messages);
+
+  }
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>AIエージェントチャットボット</CardTitle>
+      </CardHeader>
+      <CardContent className="h-[75vh] overflow-y-auto">
+        {messages.map((message, index) => (
+          <ChatBubble key={index} role={message.role}>
+            {message.content}
+          </ChatBubble>
+        ))}
+        <div ref={messagesEndRef} />
+      </CardContent>
+      <CardFooter>
+        <form onSubmit={handleSubmit} className="flex w-full space-x-2">
+          <Input
+            ref={inputRef}
+            value={input}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
+            placeholder="メッセージを入力..."
+            aria-label="メッセージを入力"
+          />
+          <Button type="submit" aria-label="送信">
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
+      </CardFooter>
+    </Card>
+  )
 }
