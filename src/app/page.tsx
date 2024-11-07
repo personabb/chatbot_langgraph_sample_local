@@ -94,6 +94,8 @@ export default function Chatbot() {
         body: JSON.stringify(interruptSet ? { session_id: sessionId, additional_input: input } : { user_input: input }),
       });
 
+
+      
       if (!response.ok) throw new Error('ネットワークエラーが発生しました');
 
       const data = await response.json();
