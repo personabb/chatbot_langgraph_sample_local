@@ -88,7 +88,7 @@ export default function Chatbot() {
 
     try {
       const endpoint = interruptSet ? '/continue' : '/ask';
-      const response = await fetch(`${process.env.BASE_URL}${endpoint}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(interruptSet ? { session_id: sessionId, additional_input: input } : { user_input: input }),
