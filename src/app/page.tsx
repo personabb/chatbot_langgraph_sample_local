@@ -72,7 +72,6 @@ export default function Chatbot() {
   //const [sessionId, setSessionId] = useState<string>("asap2650")
   const [interruptSet, setInterruptSet] = useState<boolean>(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -81,6 +80,7 @@ export default function Chatbot() {
   useEffect(scrollToBottom, [messages])
 
   const handleSubmit = async (e: React.FormEvent) => {
+    //ユーザがボタンを押すたびに、ページがリロードされるのを防ぐ
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -115,7 +115,7 @@ export default function Chatbot() {
         
         await handleInterrupt(data.session_id, data.interrupt_event);
       } else {
-        // セッションが中断されていない場合、セッションIDをリセット
+        // セッションが中断されていない場合、フラグを折る
         setInterruptSet(false);
       }
     } catch (error) {
@@ -155,7 +155,6 @@ export default function Chatbot() {
       <CardFooter>
         <form onSubmit={handleSubmit} className="flex w-full space-x-2">
           <Input
-            ref={inputRef}
             value={input}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
             placeholder="メッセージを入力..."
