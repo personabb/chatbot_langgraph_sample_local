@@ -19,7 +19,6 @@ from langchain_core.prompts import ChatPromptTemplate
 #os.environ["AZURE_OPENAI_API_KEY"] = "xxxx"
 
 
-# Lambda用の/tmpパス
 def get_local_db_path(session_id):
     return f'./sqlite_db/{session_id}.sqlite'
 
