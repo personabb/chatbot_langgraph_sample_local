@@ -68,7 +68,8 @@ type Message = {
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
-  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [sessionId, setSessionId] = useState<string>("None")
+  //const [sessionId, setSessionId] = useState<string>("asap2650")
   const [interruptSet, setInterruptSet] = useState<boolean>(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -91,7 +92,7 @@ export default function Chatbot() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(interruptSet ? { session_id: sessionId, additional_input: input } : { user_input: input }),
+        body: JSON.stringify(interruptSet ? { session_id: sessionId, additional_input: input } : {session_id: sessionId,  user_input: input }),
       });
 
 
